@@ -191,11 +191,20 @@ Contributions are welcome! Here's how to get started:
 ## 📱 Screenshots & Demo
 
 ### 🎥 **Live Demo Video**
-[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/shorts/cCsU8wNS6tE)
 
-*Full working demonstration of all 7 interactive visual effects*
+<div align="center">
 
-> **🎬 Watch the demo on YouTube**: Click the button above to view the complete demo video showcasing all interactive visual effects in action!
+[![Flutter Interactive Visuals Demo](https://img.youtube.com/vi/cCsU8wNS6tE/maxresdefault.jpg)](https://www.youtube.com/shorts/cCsU8wNS6tE)
+
+*👆 Click the thumbnail above to watch the full demo on YouTube*
+
+[![Watch on YouTube](https://img.shields.io/badge/▶️_Watch_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/shorts/cCsU8wNS6tE)
+
+</div>
+
+**🎬 Full working demonstration of all 7 interactive visual effects**
+
+> **Note**: GitHub doesn't support embedded video playback, so clicking the thumbnail or button above will open the demo video on YouTube where you can watch all the interactive visual effects in action!
 
 ### 📸 **App Screenshots**
 
