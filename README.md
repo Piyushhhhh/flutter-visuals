@@ -4,7 +4,7 @@ A beautiful, interactive Flutter application featuring **7 stunning visual effec
 
 <div align="center">
 
-[![Demo Video](https://img.shields.io/badge/🎥_Watch_Demo-4285F4?style=for-the-badge&logoColor=white)](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov)
+[![Demo Video](https://img.shields.io/badge/🎥_Watch_Demo-4285F4?style=for-the-badge&logoColor=white)](assets/demo.mov)
 [![Screenshots](https://img.shields.io/badge/📱_View_Screenshots-34A853?style=for-the-badge&logoColor=white)](#-screenshots--demo)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
@@ -174,11 +174,11 @@ Contributions are welcome! Here's how to get started:
 ## 📱 Screenshots & Demo
 
 ### 🎥 **Live Demo Video**
-[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov)
+[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](assets/demo.mov)
 
 *Full working demonstration of all 7 interactive visual effects*
 
-> **Note**: To view the demo video, download the [Screen Recording 2025-07-12 at 7.53.48 PM.mov](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov) file from the assets folder, as GitHub doesn't support direct .mov playback in markdown.
+> **Note**: To view the demo video, download the [demo.mov](assets/demo.mov) file from the assets folder, as GitHub doesn't support direct .mov playback in markdown.
 
 ### 📸 **App Screenshots**
 
