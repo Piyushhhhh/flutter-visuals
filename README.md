@@ -4,8 +4,9 @@ A beautiful, interactive Flutter application featuring **7 stunning visual effec
 
 <div align="center">
 
-[![Demo Video](https://img.shields.io/badge/🎥_Watch_Demo-4285F4?style=for-the-badge&logoColor=white)](assets/demo.mov)
+[![Demo Video](https://img.shields.io/badge/🎥_Watch_Demo-4285F4?style=for-the-badge&logoColor=white)](https://www.youtube.com/shorts/cCsU8wNS6tE)
 [![Screenshots](https://img.shields.io/badge/📱_View_Screenshots-34A853?style=for-the-badge&logoColor=white)](#-screenshots--demo)
+[![Medium Article](https://img.shields.io/badge/📝_Read_Article-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@piyushhh01/building-interactive-visual-effects-in-flutter-882c2861bac7)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
@@ -42,6 +43,22 @@ A beautiful, interactive Flutter application featuring **7 stunning visual effec
 - **Responsive Design**: Works perfectly on all screen sizes
 - **Material 3 Compliance**: Modern design following latest Material Design guidelines
 - **Complete Documentation**: Includes screenshots, demo video, and comprehensive guides
+
+## 📝 Technical Blog Post
+
+**[🔗 Read the Full Technical Article on Medium](https://medium.com/@piyushhh01/building-interactive-visual-effects-in-flutter-882c2861bac7)**
+
+Dive deep into the implementation details with our comprehensive Medium article: **"Building Interactive Visual Effects in Flutter: A Deep Dive into Custom Painting and Animations"**
+
+### 📖 What You'll Learn:
+- **Advanced CustomPainter techniques** for high-performance graphics
+- **Physics-based animations** with realistic particle systems  
+- **State management patterns** for complex interactive apps
+- **Performance optimization** strategies for smooth 60 FPS animations
+- **Common challenges and solutions** when building visual effects
+- **Architecture patterns** and best practices for Flutter animations
+
+*Perfect for developers who want to understand the technical implementation and build their own visual effects!*
 
 ## 🚀 Getting Started
 
@@ -174,11 +191,11 @@ Contributions are welcome! Here's how to get started:
 ## 📱 Screenshots & Demo
 
 ### 🎥 **Live Demo Video**
-[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](assets/demo.mov)
+[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/shorts/cCsU8wNS6tE)
 
 *Full working demonstration of all 7 interactive visual effects*
 
-> **Note**: To view the demo video, download the [demo.mov](assets/demo.mov) file from the assets folder, as GitHub doesn't support direct .mov playback in markdown.
+> **🎬 Watch the demo on YouTube**: Click the button above to view the complete demo video showcasing all interactive visual effects in action!
 
 ### 📸 **App Screenshots**
 
@@ -209,6 +226,13 @@ Contributions are welcome! Here's how to get started:
 - [ ] Add more color palettes
 - [ ] Create effect presets
 - [ ] Add haptic feedback
+
+## 📚 Resources
+
+- **[📝 Technical Blog Post](https://medium.com/@piyushhh01/building-interactive-visual-effects-in-flutter-882c2861bac7)** - Detailed implementation guide on Medium
+- [Flutter CustomPainter Documentation](https://api.flutter.dev/flutter/rendering/CustomPainter-class.html)
+- [Flutter Animation Documentation](https://flutter.dev/docs/development/ui/animations)
+- [Material Design Guidelines](https://material.io/design)
 
 ## 📄 License
 
