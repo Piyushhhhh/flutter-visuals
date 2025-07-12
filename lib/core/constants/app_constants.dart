@@ -20,8 +20,8 @@ class AppConstants {
   // Visual constants
   static const int maxParticles = 20;
   static const int floatingBallCount = 8;
-  static const int sparklesPerTouch = 3;
-  static const int sparklesPerTap = 5;
+  static const int sparklesPerTouch = 5;
+  static const int sparklesPerTap = 8;
   static const double ballRadius = 15.0;
   static const double springObjectRadius = 20.0;
   static const double particleRadius = 3.0;

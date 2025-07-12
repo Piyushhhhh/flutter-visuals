@@ -13,16 +13,33 @@ class VisualEffectsPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Paint in layers for proper visual hierarchy
-    _PaintStrokePainter.paint(canvas, state.paintStrokes);
-    _DynamicLinePainter.paint(canvas, state.dynamicLines);
-    _FloatingBallPainter.paint(canvas, state.floatingBalls);
-    _SpringObjectPainter.paint(canvas, state.springObject);
-    _ParticlePainter.paint(canvas, state.particles);
-    _SparklePainter.paint(canvas, state.sparkles);
-    _RipplePainter.paint(canvas, state.ripples);
-    _AnimatedShapePainter.paint(canvas, state.shapes);
-    _UICardPainter.paint(canvas, state.uiCards);
+    // Paint based on current effect type
+    switch (state.currentEffectType) {
+      case EffectType.particleTrail:
+        _ParticlePainter.paint(canvas, state.particles);
+        break;
+      case EffectType.rippleEffect:
+        _RipplePainter.paint(canvas, state.ripples);
+        break;
+      case EffectType.springObject:
+        _SpringObjectPainter.paint(canvas, state.springObject);
+        break;
+      case EffectType.scribbleDraw:
+        _PaintStrokePainter.paint(canvas, state.paintStrokes);
+        break;
+      case EffectType.sparkleTrail:
+        _SparklePainter.paint(canvas, state.sparkles);
+        break;
+      case EffectType.bezierWeb:
+        _BezierWebPainter.paint(canvas, state.bezierWebs);
+        _DynamicLinePainter.paint(canvas, state.dynamicLines);
+        break;
+      case EffectType.floatingBlobs:
+        _FloatingBallPainter.paint(canvas, state.floatingBalls);
+        break;
+    }
+
+    // Always paint cursor
     _CursorPainter.paint(canvas, state.cursorPosition, state.currentPaintColor);
   }
 
@@ -165,26 +182,39 @@ class _SparklePainter {
   static void paint(Canvas canvas, List<Sparkle> sparkles) {
     for (final sparkle in sparkles) {
       final opacity = sparkle.life;
+      final sparkleSize =
+          AppConstants.sparkleRadius * 3 * sparkle.size; // Increased base size
 
-      // Star shape
+      // Glow effect
+      final glowPaint = Paint()
+        ..color = sparkle.color.withOpacity(opacity * 0.3)
+        ..style = PaintingStyle.fill;
+
+      // Draw glow circles
+      canvas.drawCircle(
+        sparkle.position,
+        sparkleSize * 2,
+        glowPaint,
+      );
+
+      // Star shape with rainbow color
       final paint = Paint()
-        ..color = Colors.yellow.withOpacity(opacity)
+        ..color = sparkle.color.withOpacity(opacity)
         ..style = PaintingStyle.fill;
 
       final path = Path();
-      const double size = AppConstants.sparkleRadius * 2;
       final center = sparkle.position;
 
-      // Create star shape
-      for (int i = 0; i < 5; i++) {
-        final angle = (i * 2 * 3.14159) / 5;
-        final outerRadius = size;
-        final innerRadius = size * 0.4;
+      // Create 6-pointed star for more sparkle effect
+      for (int i = 0; i < 6; i++) {
+        final angle = (i * 2 * 3.14159) / 6;
+        final outerRadius = sparkleSize;
+        final innerRadius = sparkleSize * 0.5;
 
         final outerX = center.dx + outerRadius * cos(angle);
         final outerY = center.dy + outerRadius * sin(angle);
 
-        final innerAngle = angle + 3.14159 / 5;
+        final innerAngle = angle + 3.14159 / 6;
         final innerX = center.dx + innerRadius * cos(innerAngle);
         final innerY = center.dy + innerRadius * sin(innerAngle);
 
@@ -198,6 +228,36 @@ class _SparklePainter {
       path.close();
 
       canvas.drawPath(path, paint);
+
+      // Add a bright center dot
+      final centerPaint = Paint()
+        ..color = Colors.white.withOpacity(opacity * 0.8)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(
+        sparkle.position,
+        sparkleSize * 0.3,
+        centerPaint,
+      );
+
+      // Add sparkle "rays" effect
+      final rayPaint = Paint()
+        ..color = sparkle.color.withOpacity(opacity * 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0 * sparkle.size
+        ..strokeCap = StrokeCap.round;
+
+      // Draw cross rays
+      canvas.drawLine(
+        Offset(sparkle.position.dx - sparkleSize * 0.8, sparkle.position.dy),
+        Offset(sparkle.position.dx + sparkleSize * 0.8, sparkle.position.dy),
+        rayPaint,
+      );
+      canvas.drawLine(
+        Offset(sparkle.position.dx, sparkle.position.dy - sparkleSize * 0.8),
+        Offset(sparkle.position.dx, sparkle.position.dy + sparkleSize * 0.8),
+        rayPaint,
+      );
     }
   }
 }
@@ -331,6 +391,59 @@ class _UICardPainter {
       }
 
       canvas.restore();
+    }
+  }
+}
+
+/// Painter for bezier webs
+class _BezierWebPainter {
+  static void paint(Canvas canvas, List<BezierWeb> webs) {
+    for (final web in webs) {
+      if (web.controlPoints.length >= 2) {
+        final paint = Paint()
+          ..color = web.color.withOpacity(web.opacity)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0
+          ..strokeCap = StrokeCap.round;
+
+        final path = Path();
+        path.moveTo(web.controlPoints.first.dx, web.controlPoints.first.dy);
+
+        // Create smooth bezier curves through all points
+        for (int i = 1; i < web.controlPoints.length - 1; i++) {
+          final current = web.controlPoints[i];
+          final next = web.controlPoints[i + 1];
+
+          // Create control point for smoother curve
+          final controlPoint = Offset(
+            current.dx + (next.dx - current.dx) * 0.5,
+            current.dy + (next.dy - current.dy) * 0.5,
+          );
+
+          path.quadraticBezierTo(
+            current.dx,
+            current.dy,
+            controlPoint.dx,
+            controlPoint.dy,
+          );
+        }
+
+        // Connect to the last point
+        if (web.controlPoints.length > 1) {
+          path.lineTo(web.controlPoints.last.dx, web.controlPoints.last.dy);
+        }
+
+        canvas.drawPath(path, paint);
+
+        // Add glow effect
+        final glowPaint = Paint()
+          ..color = web.color.withOpacity(web.opacity * 0.3)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6.0
+          ..strokeCap = StrokeCap.round;
+
+        canvas.drawPath(path, glowPaint);
+      }
     }
   }
 }

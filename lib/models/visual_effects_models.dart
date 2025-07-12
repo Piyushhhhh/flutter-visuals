@@ -1,6 +1,26 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
+/// Enum for different visual effect types
+enum EffectType {
+  particleTrail(
+      'Particle Trail', 'Trails of colorful particles following the finger'),
+  rippleEffect(
+      'Ripple Effect', 'Touch creates expanding circles (like water ripples)'),
+  springObject(
+      'Spring Object', 'A ball follows your finger with spring physics'),
+  scribbleDraw('Scribble Draw', 'Freehand drawing with fading ink'),
+  sparkleTrail(
+      'Sparkle Trail', 'Glitter/sparkles left behind as you drag your finger'),
+  bezierWeb('Bezier Web', 'Connects finger path with curved bezier lines'),
+  floatingBlobs(
+      'Floating Blobs', 'Touch interacts with autonomous bouncing blobs');
+
+  const EffectType(this.displayName, this.description);
+  final String displayName;
+  final String description;
+}
+
 /// Base class for all visual effect models
 @immutable
 abstract class VisualEffect {
@@ -100,31 +120,43 @@ class Ripple extends VisualEffect {
 class Sparkle extends VisualEffect {
   final Offset position;
   final double life;
+  final Color color;
+  final double size;
 
   const Sparkle({
     required this.position,
     required this.life,
+    required this.color,
+    this.size = 1.0,
   });
 
   Sparkle copyWith({
     Offset? position,
     double? life,
+    Color? color,
+    double? size,
   }) {
     return Sparkle(
       position: position ?? this.position,
       life: life ?? this.life,
+      color: color ?? this.color,
+      size: size ?? this.size,
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Sparkle && other.position == position && other.life == life;
+    return other is Sparkle &&
+        other.position == position &&
+        other.life == life &&
+        other.color == color &&
+        other.size == size;
   }
 
   @override
   int get hashCode {
-    return position.hashCode ^ life.hashCode;
+    return position.hashCode ^ life.hashCode ^ color.hashCode ^ size.hashCode;
   }
 }
 
@@ -361,6 +393,46 @@ class UICard extends VisualEffect {
   }
 }
 
+/// Represents a bezier web connection
+@immutable
+class BezierWeb extends VisualEffect {
+  final List<Offset> controlPoints;
+  final Color color;
+  final double opacity;
+
+  const BezierWeb({
+    required this.controlPoints,
+    required this.color,
+    required this.opacity,
+  });
+
+  BezierWeb copyWith({
+    List<Offset>? controlPoints,
+    Color? color,
+    double? opacity,
+  }) {
+    return BezierWeb(
+      controlPoints: controlPoints ?? this.controlPoints,
+      color: color ?? this.color,
+      opacity: opacity ?? this.opacity,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is BezierWeb &&
+        listEquals(other.controlPoints, controlPoints) &&
+        other.color == color &&
+        other.opacity == opacity;
+  }
+
+  @override
+  int get hashCode {
+    return controlPoints.hashCode ^ color.hashCode ^ opacity.hashCode;
+  }
+}
+
 /// Represents the state of all visual effects
 @immutable
 class VisualEffectsState {
@@ -373,9 +445,11 @@ class VisualEffectsState {
   final List<AnimatedShape> shapes;
   final List<PaintStroke> paintStrokes;
   final List<UICard> uiCards;
+  final List<BezierWeb> bezierWebs;
   final SpringObject? springObject;
   final Color currentPaintColor;
   final bool isDrawing;
+  final EffectType currentEffectType;
 
   const VisualEffectsState({
     this.cursorPosition,
@@ -387,9 +461,11 @@ class VisualEffectsState {
     this.shapes = const [],
     this.paintStrokes = const [],
     this.uiCards = const [],
+    this.bezierWebs = const [],
     this.springObject,
     required this.currentPaintColor,
     this.isDrawing = false,
+    this.currentEffectType = EffectType.particleTrail,
   });
 
   VisualEffectsState copyWith({
@@ -402,9 +478,11 @@ class VisualEffectsState {
     List<AnimatedShape>? shapes,
     List<PaintStroke>? paintStrokes,
     List<UICard>? uiCards,
+    List<BezierWeb>? bezierWebs,
     SpringObject? springObject,
     Color? currentPaintColor,
     bool? isDrawing,
+    EffectType? currentEffectType,
   }) {
     return VisualEffectsState(
       cursorPosition: cursorPosition ?? this.cursorPosition,
@@ -416,9 +494,11 @@ class VisualEffectsState {
       shapes: shapes ?? this.shapes,
       paintStrokes: paintStrokes ?? this.paintStrokes,
       uiCards: uiCards ?? this.uiCards,
+      bezierWebs: bezierWebs ?? this.bezierWebs,
       springObject: springObject ?? this.springObject,
       currentPaintColor: currentPaintColor ?? this.currentPaintColor,
       isDrawing: isDrawing ?? this.isDrawing,
+      currentEffectType: currentEffectType ?? this.currentEffectType,
     );
   }
 
@@ -435,9 +515,11 @@ class VisualEffectsState {
         listEquals(other.shapes, shapes) &&
         listEquals(other.paintStrokes, paintStrokes) &&
         listEquals(other.uiCards, uiCards) &&
+        listEquals(other.bezierWebs, bezierWebs) &&
         other.springObject == springObject &&
         other.currentPaintColor == currentPaintColor &&
-        other.isDrawing == isDrawing;
+        other.isDrawing == isDrawing &&
+        other.currentEffectType == currentEffectType;
   }
 
   @override
@@ -451,8 +533,10 @@ class VisualEffectsState {
         shapes.hashCode ^
         paintStrokes.hashCode ^
         uiCards.hashCode ^
+        bezierWebs.hashCode ^
         springObject.hashCode ^
         currentPaintColor.hashCode ^
-        isDrawing.hashCode;
+        isDrawing.hashCode ^
+        currentEffectType.hashCode;
   }
 }

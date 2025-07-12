@@ -27,6 +27,21 @@ class VisualEffectsController extends ChangeNotifier {
     Colors.cyan,
   ];
 
+  final List<Color> _rainbowColors = [
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.indigo,
+    Colors.purple,
+    Colors.pink,
+    Colors.cyan,
+    Colors.lime,
+    const Color(0xFFFF00FF), // Magenta
+    Colors.teal,
+  ];
+
   /// Updates the screen size for bounds checking
   void updateScreenSize(Size size) {
     _screenSize = size;
@@ -163,7 +178,7 @@ class VisualEffectsController extends ChangeNotifier {
     final sparkles = _state.sparkles
         .map((sparkle) {
           return sparkle.copyWith(
-            life: sparkle.life - 0.03,
+            life: sparkle.life - 0.015, // Slower decay for longer visibility
           );
         })
         .where((sparkle) => sparkle.life > 0)
@@ -205,67 +220,59 @@ class VisualEffectsController extends ChangeNotifier {
   void onPanUpdate(Offset position) {
     _state = _state.copyWith(cursorPosition: position);
 
-    // Create ripple effect
-    final ripples = List<Ripple>.from(_state.ripples);
-    ripples.add(Ripple(
-      position: position,
-      radius: 0,
-      opacity: 1.0,
-    ));
-
-    // Create sparkles
-    final sparkles = List<Sparkle>.from(_state.sparkles);
-    for (int i = 0; i < AppConstants.sparklesPerTouch; i++) {
-      sparkles.add(Sparkle(
-        position: position.withJitter(20),
-        life: 1.0,
-      ));
-    }
-
-    // Add paint stroke
-    final paintStrokes = List<PaintStroke>.from(_state.paintStrokes);
-    paintStrokes.add(PaintStroke(
-      position: position,
-      color: _state.currentPaintColor,
-      size: AppConstants.paintStrokeSize,
-    ));
-
-    // Create animated shapes occasionally
-    if (_random.nextDouble() < AppConstants.shapeSpawnProbability) {
-      final shapes = List<AnimatedShape>.from(_state.shapes);
-      shapes.add(AnimatedShape(
-        position: position,
-        type: _random.nextBool() ? ShapeType.circle : ShapeType.triangle,
-        scale: 0.0,
-      ));
-      _state = _state.copyWith(shapes: shapes);
-    }
-
-    // Create UI cards occasionally
-    if (_random.nextDouble() < AppConstants.cardSpawnProbability) {
-      final cards = List<UICard>.from(_state.uiCards);
-      cards.add(UICard(
-        position: position,
-        scale: 0.0,
-        rotation: 0.0,
-      ));
-      _state = _state.copyWith(uiCards: cards);
-    }
-
-    _state = _state.copyWith(
-      ripples: ripples,
-      sparkles: sparkles,
-      paintStrokes: paintStrokes,
-    );
-
-    // Start spring object if not exists
-    if (_state.springObject == null) {
-      _state = _state.copyWith(
-        springObject: SpringObject(
+    switch (_state.currentEffectType) {
+      case EffectType.particleTrail:
+        // Particles will be generated in updateParticles()
+        break;
+      case EffectType.rippleEffect:
+        final ripples = List<Ripple>.from(_state.ripples);
+        ripples.add(Ripple(
           position: position,
-          velocity: Offset.zero,
-        ),
-      );
+          radius: 0,
+          opacity: 1.0,
+        ));
+        _state = _state.copyWith(ripples: ripples);
+        break;
+      case EffectType.springObject:
+        // Spring object will follow in updateSpringObject()
+        break;
+      case EffectType.scribbleDraw:
+        final paintStrokes = List<PaintStroke>.from(_state.paintStrokes);
+        paintStrokes.add(PaintStroke(
+          position: position,
+          color: _state.currentPaintColor,
+          size: AppConstants.paintStrokeSize,
+        ));
+        _state = _state.copyWith(paintStrokes: paintStrokes);
+        break;
+      case EffectType.sparkleTrail:
+        final sparkles = List<Sparkle>.from(_state.sparkles);
+        // Create more sparkles with rainbow colors and varied sizes
+        for (int i = 0; i < AppConstants.sparklesPerTouch * 2; i++) {
+          sparkles.add(Sparkle(
+            position: position.withJitter(40),
+            life: 1.0,
+            color: _rainbowColors[_random.nextInt(_rainbowColors.length)],
+            size: 0.8 + _random.nextDouble() * 0.4, // Size between 0.8 and 1.2
+          ));
+        }
+        _state = _state.copyWith(sparkles: sparkles);
+        break;
+      case EffectType.bezierWeb:
+        // Add point to current dynamic line
+        if (_state.dynamicLines.isNotEmpty) {
+          final dynamicLines = List<DynamicLine>.from(_state.dynamicLines);
+          final lastLine = dynamicLines.last;
+          final updatedLine = lastLine.copyWith(
+            points: [...lastLine.points, position],
+          );
+          dynamicLines[dynamicLines.length - 1] = updatedLine;
+          _state = _state.copyWith(dynamicLines: dynamicLines);
+        }
+        break;
+      case EffectType.floatingBlobs:
+        // Floating balls will interact in updateFloatingBalls()
+        break;
     }
 
     notifyListeners();
@@ -278,20 +285,38 @@ class VisualEffectsController extends ChangeNotifier {
       isDrawing: true,
     );
 
-    // Start new dynamic line
-    final dynamicLines = List<DynamicLine>.from(_state.dynamicLines);
-    dynamicLines.add(DynamicLine(
-      points: [position],
-      color: _state.currentPaintColor,
-    ));
+    // Start new dynamic line for bezier web effect
+    if (_state.currentEffectType == EffectType.bezierWeb) {
+      final dynamicLines = List<DynamicLine>.from(_state.dynamicLines);
+      dynamicLines.add(DynamicLine(
+        points: [position],
+        color: _state.currentPaintColor,
+      ));
+      _state = _state.copyWith(dynamicLines: dynamicLines);
+    }
 
-    _state = _state.copyWith(dynamicLines: dynamicLines);
     notifyListeners();
   }
 
   /// Handles pan end gesture
   void onPanEnd() {
     _state = _state.copyWith(isDrawing: false);
+
+    // Create bezier web from completed line
+    if (_state.currentEffectType == EffectType.bezierWeb &&
+        _state.dynamicLines.isNotEmpty) {
+      final lastLine = _state.dynamicLines.last;
+      if (lastLine.points.length >= 2) {
+        final webs = List<BezierWeb>.from(_state.bezierWebs);
+        webs.add(BezierWeb(
+          controlPoints: lastLine.points,
+          color: _state.currentPaintColor,
+          opacity: 1.0,
+        ));
+        _state = _state.copyWith(bezierWebs: webs);
+      }
+    }
+
     notifyListeners();
   }
 
@@ -307,12 +332,14 @@ class VisualEffectsController extends ChangeNotifier {
       opacity: 1.0,
     ));
 
-    // Create sparkles
+    // Create sparkles with rainbow colors
     final sparkles = List<Sparkle>.from(_state.sparkles);
-    for (int i = 0; i < AppConstants.sparklesPerTap; i++) {
+    for (int i = 0; i < AppConstants.sparklesPerTap * 2; i++) {
       sparkles.add(Sparkle(
-        position: position.withJitter(30),
+        position: position.withJitter(50),
         life: 1.0,
+        color: _rainbowColors[_random.nextInt(_rainbowColors.length)],
+        size: 0.8 + _random.nextDouble() * 0.6, // Size between 0.8 and 1.4
       ));
     }
 
@@ -340,15 +367,65 @@ class VisualEffectsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Changes the current effect type
+  void changeEffectType(EffectType effectType) {
+    _state = _state.copyWith(currentEffectType: effectType);
+    clearAllEffects();
+
+    // Initialize effect-specific elements
+    if (effectType == EffectType.floatingBlobs) {
+      initializeFloatingBalls();
+    } else if (effectType == EffectType.springObject) {
+      _state = _state.copyWith(
+        springObject: SpringObject(
+          position: const Offset(200, 200),
+          velocity: Offset.zero,
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  /// Updates bezier webs
+  void updateBezierWebs() {
+    final webs = _state.bezierWebs
+        .map((web) {
+          return web.copyWith(
+            opacity: (web.opacity - 0.015).clamp(0.0, 1.0),
+          );
+        })
+        .where((web) => web.opacity > 0)
+        .toList();
+
+    _state = _state.copyWith(bezierWebs: webs);
+  }
+
   /// Updates all effects (called from animation loop)
   void updateAllEffects() {
-    updateParticles();
-    updateFloatingBalls();
-    updateSpringObject();
-    updateRipples();
-    updateSparkles();
-    updateShapes();
-    updateUICards();
+    switch (_state.currentEffectType) {
+      case EffectType.particleTrail:
+        updateParticles();
+        break;
+      case EffectType.rippleEffect:
+        updateRipples();
+        break;
+      case EffectType.springObject:
+        updateSpringObject();
+        break;
+      case EffectType.scribbleDraw:
+        updateShapes();
+        break;
+      case EffectType.sparkleTrail:
+        updateSparkles();
+        break;
+      case EffectType.bezierWeb:
+        updateBezierWebs();
+        break;
+      case EffectType.floatingBlobs:
+        updateFloatingBalls();
+        break;
+    }
     notifyListeners();
   }
 
@@ -356,6 +433,7 @@ class VisualEffectsController extends ChangeNotifier {
   void clearAllEffects() {
     _state = VisualEffectsState(
       currentPaintColor: _state.currentPaintColor,
+      currentEffectType: _state.currentEffectType,
     );
     notifyListeners();
   }
