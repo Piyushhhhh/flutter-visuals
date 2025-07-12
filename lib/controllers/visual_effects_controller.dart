@@ -89,10 +89,29 @@ class VisualEffectsController extends ChangeNotifier {
     // Update existing particles
     particles = particles
         .map((particle) {
+          final newPosition = particle.position + particle.velocity;
+          final newLife = particle.life - AppConstants.particleDecay;
+          final newVelocity =
+              particle.velocity * AppConstants.particleVelocityDecay;
+
+          // Validate new values
+          if (newLife.isNaN ||
+              newLife.isInfinite ||
+              newPosition.dx.isNaN ||
+              newPosition.dx.isInfinite ||
+              newPosition.dy.isNaN ||
+              newPosition.dy.isInfinite ||
+              newVelocity.dx.isNaN ||
+              newVelocity.dx.isInfinite ||
+              newVelocity.dy.isNaN ||
+              newVelocity.dy.isInfinite) {
+            return particle.copyWith(life: 0.0);
+          }
+
           return particle.copyWith(
-            position: particle.position + particle.velocity,
-            life: particle.life - AppConstants.particleDecay,
-            velocity: particle.velocity * AppConstants.particleVelocityDecay,
+            position: newPosition,
+            life: newLife,
+            velocity: newVelocity,
           );
         })
         .where((particle) => particle.life > 0)
@@ -177,9 +196,13 @@ class VisualEffectsController extends ChangeNotifier {
   void updateSparkles() {
     final sparkles = _state.sparkles
         .map((sparkle) {
-          return sparkle.copyWith(
-            life: sparkle.life - 0.008, // Much slower decay for longer trail
-          );
+          final newLife =
+              sparkle.life - 0.008; // Much slower decay for longer trail
+          // Ensure life values are valid
+          if (newLife.isNaN || newLife.isInfinite) {
+            return sparkle.copyWith(life: 0.0);
+          }
+          return sparkle.copyWith(life: newLife);
         })
         .where((sparkle) => sparkle.life > 0)
         .toList();

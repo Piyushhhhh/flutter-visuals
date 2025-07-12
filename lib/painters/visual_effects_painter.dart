@@ -86,6 +86,14 @@ class _DynamicLinePainter {
 class _FloatingBallPainter {
   static void paint(Canvas canvas, List<FloatingBall> balls) {
     for (final ball in balls) {
+      // Validate ball properties
+      if (ball.position.dx.isNaN ||
+          ball.position.dx.isInfinite ||
+          ball.position.dy.isNaN ||
+          ball.position.dy.isInfinite) {
+        continue;
+      }
+
       // Shadow
       final shadowPaint = Paint()
         ..color = Colors.black.withOpacity(0.2)
@@ -119,6 +127,14 @@ class _FloatingBallPainter {
 class _SpringObjectPainter {
   static void paint(Canvas canvas, SpringObject? springObject) {
     if (springObject == null) return;
+
+    // Validate spring object properties
+    if (springObject.position.dx.isNaN ||
+        springObject.position.dx.isInfinite ||
+        springObject.position.dy.isNaN ||
+        springObject.position.dy.isInfinite) {
+      return;
+    }
 
     // Shadow
     final shadowPaint = Paint()
@@ -161,16 +177,32 @@ class _SpringObjectPainter {
 class _ParticlePainter {
   static void paint(Canvas canvas, List<Particle> particles) {
     for (final particle in particles) {
+      // Validate particle properties
+      if (particle.life <= 0 ||
+          particle.life.isNaN ||
+          particle.life.isInfinite) {
+        continue;
+      }
+
+      if (particle.position.dx.isNaN ||
+          particle.position.dx.isInfinite ||
+          particle.position.dy.isNaN ||
+          particle.position.dy.isInfinite) {
+        continue;
+      }
+
+      final opacity = particle.life.clamp(0.0, 1.0);
+
       // Glow effect
       final glowPaint = Paint()
-        ..color = particle.color.withOpacity(particle.life * 0.3)
+        ..color = particle.color.withOpacity((opacity * 0.3).clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
       canvas.drawCircle(
           particle.position, AppConstants.particleRadius * 2, glowPaint);
 
       // Main particle
       final paint = Paint()
-        ..color = particle.color.withOpacity(particle.life)
+        ..color = particle.color.withOpacity(opacity)
         ..style = PaintingStyle.fill;
       canvas.drawCircle(particle.position, AppConstants.particleRadius, paint);
     }
@@ -181,13 +213,34 @@ class _ParticlePainter {
 class _SparklePainter {
   static void paint(Canvas canvas, List<Sparkle> sparkles) {
     for (final sparkle in sparkles) {
-      final opacity = sparkle.life;
+      // Validate sparkle properties to prevent paint assertions
+      if (sparkle.life <= 0 || sparkle.life.isNaN || sparkle.life.isInfinite) {
+        continue;
+      }
+
+      if (sparkle.size <= 0 || sparkle.size.isNaN || sparkle.size.isInfinite) {
+        continue;
+      }
+
+      if (sparkle.position.dx.isNaN ||
+          sparkle.position.dx.isInfinite ||
+          sparkle.position.dy.isNaN ||
+          sparkle.position.dy.isInfinite) {
+        continue;
+      }
+
+      final opacity = sparkle.life.clamp(0.0, 1.0);
       final sparkleSize =
-          AppConstants.sparkleRadius * 3 * sparkle.size; // Increased base size
+          (AppConstants.sparkleRadius * 3 * sparkle.size).clamp(1.0, 100.0);
+
+      // Validate opacity before using
+      if (opacity <= 0 || opacity.isNaN || opacity.isInfinite) {
+        continue;
+      }
 
       // Glow effect
       final glowPaint = Paint()
-        ..color = sparkle.color.withOpacity(opacity * 0.3)
+        ..color = sparkle.color.withOpacity((opacity * 0.3).clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
 
       // Draw glow circles
@@ -199,7 +252,7 @@ class _SparklePainter {
 
       // Star shape with rainbow color
       final paint = Paint()
-        ..color = sparkle.color.withOpacity(opacity)
+        ..color = sparkle.color.withOpacity(opacity.clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
 
       final path = Path();
@@ -218,6 +271,18 @@ class _SparklePainter {
         final innerX = center.dx + innerRadius * cos(innerAngle);
         final innerY = center.dy + innerRadius * sin(innerAngle);
 
+        // Validate calculated positions
+        if (outerX.isNaN ||
+            outerX.isInfinite ||
+            outerY.isNaN ||
+            outerY.isInfinite ||
+            innerX.isNaN ||
+            innerX.isInfinite ||
+            innerY.isNaN ||
+            innerY.isInfinite) {
+          continue;
+        }
+
         if (i == 0) {
           path.moveTo(outerX, outerY);
         } else {
@@ -231,7 +296,7 @@ class _SparklePainter {
 
       // Add a bright center dot
       final centerPaint = Paint()
-        ..color = Colors.white.withOpacity(opacity * 0.8)
+        ..color = Colors.white.withOpacity((opacity * 0.8).clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
 
       canvas.drawCircle(
@@ -241,10 +306,11 @@ class _SparklePainter {
       );
 
       // Add sparkle "rays" effect
+      final strokeWidth = (2.0 * sparkle.size).clamp(0.1, 10.0);
       final rayPaint = Paint()
-        ..color = sparkle.color.withOpacity(opacity * 0.6)
+        ..color = sparkle.color.withOpacity((opacity * 0.6).clamp(0.0, 1.0))
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0 * sparkle.size
+        ..strokeWidth = strokeWidth
         ..strokeCap = StrokeCap.round;
 
       // Draw cross rays
@@ -266,19 +332,39 @@ class _SparklePainter {
 class _RipplePainter {
   static void paint(Canvas canvas, List<Ripple> ripples) {
     for (final ripple in ripples) {
+      // Validate ripple properties
+      if (ripple.opacity <= 0 ||
+          ripple.opacity.isNaN ||
+          ripple.opacity.isInfinite ||
+          ripple.radius < 0 ||
+          ripple.radius.isNaN ||
+          ripple.radius.isInfinite) {
+        continue;
+      }
+
+      if (ripple.position.dx.isNaN ||
+          ripple.position.dx.isInfinite ||
+          ripple.position.dy.isNaN ||
+          ripple.position.dy.isInfinite) {
+        continue;
+      }
+
+      final opacity = ripple.opacity.clamp(0.0, 1.0);
+      final radius = ripple.radius.clamp(0.0, 1000.0);
+
       final paint = Paint()
-        ..color = Colors.blue.withOpacity(ripple.opacity)
+        ..color = Colors.blue.withOpacity(opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0;
-      canvas.drawCircle(ripple.position, ripple.radius, paint);
+      canvas.drawCircle(ripple.position, radius, paint);
 
       // Inner ripple
-      if (ripple.radius > 10) {
+      if (radius > 10) {
         final innerPaint = Paint()
-          ..color = Colors.cyan.withOpacity(ripple.opacity * 0.5)
+          ..color = Colors.cyan.withOpacity((opacity * 0.5).clamp(0.0, 1.0))
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.0;
-        canvas.drawCircle(ripple.position, ripple.radius * 0.6, innerPaint);
+        canvas.drawCircle(ripple.position, radius * 0.6, innerPaint);
       }
     }
   }
@@ -399,51 +485,84 @@ class _UICardPainter {
 class _BezierWebPainter {
   static void paint(Canvas canvas, List<BezierWeb> webs) {
     for (final web in webs) {
-      if (web.controlPoints.length >= 2) {
-        final paint = Paint()
-          ..color = web.color.withOpacity(web.opacity)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0
-          ..strokeCap = StrokeCap.round;
-
-        final path = Path();
-        path.moveTo(web.controlPoints.first.dx, web.controlPoints.first.dy);
-
-        // Create smooth bezier curves through all points
-        for (int i = 1; i < web.controlPoints.length - 1; i++) {
-          final current = web.controlPoints[i];
-          final next = web.controlPoints[i + 1];
-
-          // Create control point for smoother curve
-          final controlPoint = Offset(
-            current.dx + (next.dx - current.dx) * 0.5,
-            current.dy + (next.dy - current.dy) * 0.5,
-          );
-
-          path.quadraticBezierTo(
-            current.dx,
-            current.dy,
-            controlPoint.dx,
-            controlPoint.dy,
-          );
-        }
-
-        // Connect to the last point
-        if (web.controlPoints.length > 1) {
-          path.lineTo(web.controlPoints.last.dx, web.controlPoints.last.dy);
-        }
-
-        canvas.drawPath(path, paint);
-
-        // Add glow effect
-        final glowPaint = Paint()
-          ..color = web.color.withOpacity(web.opacity * 0.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 6.0
-          ..strokeCap = StrokeCap.round;
-
-        canvas.drawPath(path, glowPaint);
+      // Validate web properties
+      if (web.opacity <= 0 || web.opacity.isNaN || web.opacity.isInfinite) {
+        continue;
       }
+
+      if (web.controlPoints.length < 2) {
+        continue;
+      }
+
+      // Validate all control points
+      bool hasValidPoints = true;
+      for (final point in web.controlPoints) {
+        if (point.dx.isNaN ||
+            point.dx.isInfinite ||
+            point.dy.isNaN ||
+            point.dy.isInfinite) {
+          hasValidPoints = false;
+          break;
+        }
+      }
+
+      if (!hasValidPoints) {
+        continue;
+      }
+
+      final opacity = web.opacity.clamp(0.0, 1.0);
+
+      final paint = Paint()
+        ..color = web.color.withOpacity(opacity)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..strokeCap = StrokeCap.round;
+
+      final path = Path();
+      path.moveTo(web.controlPoints.first.dx, web.controlPoints.first.dy);
+
+      // Create smooth bezier curves through all points
+      for (int i = 1; i < web.controlPoints.length - 1; i++) {
+        final current = web.controlPoints[i];
+        final next = web.controlPoints[i + 1];
+
+        // Create control point for smoother curve
+        final controlPoint = Offset(
+          current.dx + (next.dx - current.dx) * 0.5,
+          current.dy + (next.dy - current.dy) * 0.5,
+        );
+
+        // Validate control point
+        if (controlPoint.dx.isNaN ||
+            controlPoint.dx.isInfinite ||
+            controlPoint.dy.isNaN ||
+            controlPoint.dy.isInfinite) {
+          continue;
+        }
+
+        path.quadraticBezierTo(
+          current.dx,
+          current.dy,
+          controlPoint.dx,
+          controlPoint.dy,
+        );
+      }
+
+      // Connect to the last point
+      if (web.controlPoints.length > 1) {
+        path.lineTo(web.controlPoints.last.dx, web.controlPoints.last.dy);
+      }
+
+      canvas.drawPath(path, paint);
+
+      // Add glow effect
+      final glowPaint = Paint()
+        ..color = web.color.withOpacity((opacity * 0.3).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawPath(path, glowPaint);
     }
   }
 }

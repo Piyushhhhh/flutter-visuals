@@ -186,7 +186,7 @@ Contributions are welcome! Here's how to get started:
 
 | Floating Blobs Effect | Particle Trail Effect | Sparkle Trail Effect |
 |:---------------------:|:--------------------:|:-------------------:|
-| ![Floating Blobs](assets/simulator_screenshot_3432625B-3803-4A3D-BF7E-A8E0BC8676A8.png) | ![Particle Trail](assets/simulator_screenshot_E2952EE4-D00C-48CD-8B43-88A6EDBB23E5.png) | ![Sparkle Trail](assets/simulator_screenshot_ADC64F97-33FC-4876-9E1D-CEE6E435B645.png) |
+| ![Floating Blobs](assets/simulator_screenshot_3432625B-3803-4A3D-BF7E-A8E0BC8676A8.png) | ![Particle Trail](assets/simulator_screenshot_E2952EE4-D00C-48CD-8B43-88A6EDBB23E5.png) | ![Sparkle Trail](assets/sparkle.png) |
 
 </div>
 
