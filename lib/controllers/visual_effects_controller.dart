@@ -178,7 +178,7 @@ class VisualEffectsController extends ChangeNotifier {
     final sparkles = _state.sparkles
         .map((sparkle) {
           return sparkle.copyWith(
-            life: sparkle.life - 0.015, // Slower decay for longer visibility
+            life: sparkle.life - 0.008, // Much slower decay for longer trail
           );
         })
         .where((sparkle) => sparkle.life > 0)
@@ -250,8 +250,8 @@ class VisualEffectsController extends ChangeNotifier {
         // Create more sparkles with rainbow colors and varied sizes
         for (int i = 0; i < AppConstants.sparklesPerTouch * 2; i++) {
           sparkles.add(Sparkle(
-            position: position.withJitter(40),
-            life: 1.0,
+            position: position.withJitter(50),
+            life: 1.5, // Increased initial life for longer trail
             color: _rainbowColors[_random.nextInt(_rainbowColors.length)],
             size: 0.8 + _random.nextDouble() * 0.4, // Size between 0.8 and 1.2
           ));
@@ -336,8 +336,8 @@ class VisualEffectsController extends ChangeNotifier {
     final sparkles = List<Sparkle>.from(_state.sparkles);
     for (int i = 0; i < AppConstants.sparklesPerTap * 2; i++) {
       sparkles.add(Sparkle(
-        position: position.withJitter(50),
-        life: 1.0,
+        position: position.withJitter(60),
+        life: 1.5, // Increased initial life for longer trail
         color: _rainbowColors[_random.nextInt(_rainbowColors.length)],
         size: 0.8 + _random.nextDouble() * 0.6, // Size between 0.8 and 1.4
       ));
