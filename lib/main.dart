@@ -26,14 +26,12 @@ class VisualsApp extends StatelessWidget {
 
 class _DynamicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VisualEffectsController controller;
-  final VoidCallback onColorChange;
   final VoidCallback onClear;
   final bool Function(Color) isDarkColor;
   final IconData Function(EffectType) getEffectIcon;
 
   const _DynamicAppBar({
     required this.controller,
-    required this.onColorChange,
     required this.onClear,
     required this.isDarkColor,
     required this.getEffectIcon,
@@ -125,45 +123,24 @@ class _DynamicAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           actions: [
             Container(
-              margin: const EdgeInsets.only(right: 4),
+              margin: const EdgeInsets.only(right: 12),
               child: IconButton(
                 icon: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color:
-                        (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: (isDark ? Colors.white : Colors.black)
+                        .withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
-                    Icons.color_lens,
+                    Icons.close,
                     color: isDark ? Colors.white : Colors.black,
-                    size: 20,
-                  ),
-                ),
-                onPressed: onColorChange,
-                tooltip: 'Change Paint Color',
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              child: IconButton(
-                icon: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color:
-                        (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.clear_all,
-                    color: isDark ? Colors.white : Colors.black,
-                    size: 20,
+                    size: 22,
                   ),
                 ),
                 onPressed: onClear,
-                tooltip: 'Clear All Effects',
+                tooltip: 'Clear Frame',
               ),
             ),
           ],
@@ -245,7 +222,6 @@ class _InteractiveVisualsPageState extends State<InteractiveVisualsPage> {
     return Scaffold(
       appBar: _DynamicAppBar(
         controller: _controller,
-        onColorChange: _controller.changePaintColor,
         onClear: _controller.clearAllEffects,
         isDarkColor: _isDarkColor,
         getEffectIcon: _getEffectIcon,
@@ -283,11 +259,21 @@ class _InteractiveVisualsPageState extends State<InteractiveVisualsPage> {
             child: const Icon(Icons.auto_awesome),
           ),
           const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: _controller.changePaintColor,
-            backgroundColor: Colors.orange,
-            heroTag: "color_picker",
-            child: const Icon(Icons.palette),
+          ListenableBuilder(
+            listenable: _controller,
+            builder: (context, child) {
+              return FloatingActionButton(
+                onPressed: _controller.changePaintColor,
+                backgroundColor: _controller.state.currentPaintColor,
+                heroTag: "color_picker",
+                child: Icon(
+                  Icons.palette,
+                  color: _isDarkColor(_controller.state.currentPaintColor)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              );
+            },
           ),
         ],
       ),
