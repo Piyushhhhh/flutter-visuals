@@ -2,6 +2,15 @@
 
 A beautiful, interactive Flutter application featuring **7 stunning visual effects** with dynamic theming and professional UI design. Created to showcase advanced Flutter animations, custom painting, and interactive touch experiences.
 
+<div align="center">
+
+[![Demo Video](https://img.shields.io/badge/🎥_Watch_Demo-4285F4?style=for-the-badge&logoColor=white)](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov)
+[![Screenshots](https://img.shields.io/badge/📱_View_Screenshots-34A853?style=for-the-badge&logoColor=white)](#-screenshots--demo)
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+</div>
+
 ## ✨ Features
 
 ### 🎯 **7 Interactive Visual Effects**
@@ -32,6 +41,7 @@ A beautiful, interactive Flutter application featuring **7 stunning visual effec
 - **Professional Architecture**: Clean code separation with controllers, models, and widgets
 - **Responsive Design**: Works perfectly on all screen sizes
 - **Material 3 Compliance**: Modern design following latest Material Design guidelines
+- **Complete Documentation**: Includes screenshots, demo video, and comprehensive guides
 
 ## 🚀 Getting Started
 
@@ -161,9 +171,32 @@ Contributions are welcome! Here's how to get started:
 - Maintain consistent code style
 - Test on multiple devices
 
-## 📱 Screenshots
+## 📱 Screenshots & Demo
 
-*Add screenshots of your app showing different effects in action*
+### 🎥 **Live Demo Video**
+[![Flutter Interactive Visuals Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov)
+
+*Full working demonstration of all 7 interactive visual effects*
+
+> **Note**: To view the demo video, download the [Screen Recording 2025-07-12 at 7.53.48 PM.mov](assets/Screen%20Recording%202025-07-12%20at%207.53.48%20PM.mov) file from the assets folder, as GitHub doesn't support direct .mov playback in markdown.
+
+### 📸 **App Screenshots**
+
+<div align="center">
+
+| Floating Blobs Effect | Particle Trail Effect | Sparkle Trail Effect |
+|:---------------------:|:--------------------:|:-------------------:|
+| ![Floating Blobs](assets/simulator_screenshot_3432625B-3803-4A3D-BF7E-A8E0BC8676A8.png) | ![Particle Trail](assets/simulator_screenshot_E2952EE4-D00C-48CD-8B43-88A6EDBB23E5.png) | ![Sparkle Trail](assets/simulator_screenshot_ADC64F97-33FC-4876-9E1D-CEE6E435B645.png) |
+
+</div>
+
+### ✨ **Key Visual Features Shown**
+- **Dynamic app bar** with gradient background matching paint color
+- **Professional cross icon** for clearing the frame
+- **Floating action buttons** with effect selector and color picker
+- **Real-time visual effects** responding to touch interactions
+- **Smooth animations** and particle physics
+- **Modern UI design** with clean typography and spacing
 
 ## 🐛 Known Issues
 
